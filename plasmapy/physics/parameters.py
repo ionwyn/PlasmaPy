@@ -32,6 +32,7 @@ import numpy as np
 from plasmapy.constants import (m_p, m_e, c, mu0, k_B, e, eps0, pi)
 from plasmapy import atomic, utils
 
+from plasmapy.atomic import particle_input, Particle
 from plasmapy.utils.exceptions import (PhysicsError, AtomicError)
 
 
@@ -63,8 +64,8 @@ def _grab_charge(ion, z_mean=None):
         Z = z_mean
     return Z
 
-
-def mass_density(density, particle: str = None, z_mean: float = None) -> u.kg / u.m ** 3:
+@particle_input
+def mass_density(density, particle: Particle, z_mean: float = None) -> u.kg / u.m ** 3:
     """Utility function to merge two possible inputs for particle charge.
 
     Parameters
@@ -73,7 +74,7 @@ def mass_density(density, particle: str = None, z_mean: float = None) -> u.kg / 
         Either a particle density (number of particles per density, in units
         of 1/m^3) or a mass density (in units of kg/m^3 or equivalent).
 
-    particle : str, optional
+    particle : Particle
         Representation of the particle species (e.g., `'p'` for protons, `'D+'`
         for deuterium, or `'He-4 +1'` for singly ionized helium-4),
         which defaults to electrons.  If no charge state information is
@@ -98,12 +99,12 @@ def mass_density(density, particle: str = None, z_mean: float = None) -> u.kg / 
     if density.unit.is_equivalent(u.kg / u.m ** 3):
         rho = density
     elif density.unit.is_equivalent(u.m ** -3):
-        if particle:
-            m_i = atomic.particle_mass(particle)
-            Z = _grab_charge(particle, z_mean)
+        if particle.particle:
+            m_i = atomic.particle_mass(particle.particle)
+            Z = _grab_charge(particle.particle, z_mean)
             rho = density * m_i + Z * density * m_e
         else:
-            raise ValueError(f"You must pass a particle (not {particle}) to calculate the "
+            raise ValueError(f"You must pass a particle (not {particle.particle}) to calculate the "
                              f"mass density!")
     else:
         raise ValueError(f"mass_density accepts either particle (m**-3)"
