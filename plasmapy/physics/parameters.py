@@ -65,7 +65,7 @@ def _grab_charge(ion, z_mean=None):
     return Z
 
 @particle_input
-def mass_density(density, particle: Particle, z_mean: float = None) -> u.kg / u.m ** 3:
+def mass_density(density, particle: Particle = None, z_mean: float = None) -> u.kg / u.m ** 3:
     """Utility function to merge two possible inputs for particle charge.
 
     Parameters
