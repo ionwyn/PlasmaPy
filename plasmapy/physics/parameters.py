@@ -64,7 +64,9 @@ def _grab_charge(ion, z_mean=None):
         Z = z_mean
     return Z
 
-@particle_input
+@particle_input(
+    any_of={'charged', 'uncharged'}    
+    )
 def mass_density(density, particle: Particle = None, z_mean: float = None) -> u.kg / u.m ** 3:
     """Utility function to merge two possible inputs for particle charge.
 
@@ -510,7 +512,10 @@ def thermal_pressure(T, n):
 @utils.check_quantity(
     T={'units': u.K, 'can_be_negative': False}
     )
-def kappa_thermal_speed(T, kappa, particle="e-", method="most_probable"):
+@particle_input(
+    any_of={'charged', 'uncharged'}    
+    )
+def kappa_thermal_speed(T, kappa, particle: Particle = "e-", method="most_probable"):
     r"""Return the most probable speed for a particle within a Kappa
     distribution.
 
@@ -519,13 +524,13 @@ def kappa_thermal_speed(T, kappa, particle="e-", method="most_probable"):
     T : ~astropy.units.Quantity
         The particle temperature in either kelvin or energy per particle
 
-    kappa: float
+    kappa : float
         The kappa parameter is a dimensionless number which sets the slope
         of the energy spectrum of suprathermal particles forming the tail
         of the Kappa velocity distribution function. Kappa must be greater
         than 3/2.
 
-    particle : str, optional
+    particle : Particle, optional
         Representation of the particle species (e.g., 'p' for protons, 'D+'
         for deuterium, or 'He-4 +1' for singly ionized helium-4),
         which defaults to electrons.  If no charge state information is
@@ -617,11 +622,12 @@ def kappa_thermal_speed(T, kappa, particle="e-", method="most_probable"):
     T={'units': u.K, 'can_be_negative': False},
     B={'units': u.T}
     )
+@particle_input
 def Hall_parameter(n,
                    T,
                    B,
                    ion_particle,
-                   particle='e-',
+                   particle: Particle='e-',
                    coulomb_log=None,
                    V=None,
                    coulomb_log_method="classical"):
@@ -640,7 +646,7 @@ def Hall_parameter(n,
         The magnetic field
     ion_particle : str
         String signifying the type of ion.
-    particle : str, optional
+    particle : Particle, optional
         String signifying the type of particles. Defaults to electrons.
     coulomb_log : float, optional
         Preset value for the Coulomb logarithm. Used mostly for testing purposes.
@@ -777,6 +783,9 @@ def gyrofrequency(B: u.T, particle='e-', signed=False, Z=None):
                       Vperp={'units': u.m / u.s, 'can_be_nan': True},
                       T_i={'units': u.K, 'can_be_nan': True},
                       )
+@particle_input(
+    any_of={'charged', 'uncharged'}
+    )
 def gyroradius(B: u.T,
                particle='e-',
                *,
@@ -789,7 +798,7 @@ def gyroradius(B: u.T,
     B : ~astropy.units.Quantity
         The magnetic field magnitude in units convertible to tesla.
 
-    particle : str, optional
+    particle : Particle, optional
         Representation of the particle species (e.g., `'p'` for protons, `'D+'`
         for deuterium, or `'He-4 +1'` for singly ionized helium-4),
         which defaults to electrons.  If no charge state information is
@@ -923,7 +932,10 @@ def gyroradius(B: u.T,
 @utils.check_quantity(
     n={'units': u.m ** -3, 'can_be_negative': False}
     )
-def plasma_frequency(n: u.m**-3, particle='e-', z_mean=None):
+@particle_input(
+    any_of={'charged', 'uncharged'}
+    )
+def plasma_frequency(n: u.m**-3, particle: Particle='e-', z_mean=None):
     r"""Calculate the particle plasma frequency.
 
     Parameters
@@ -931,7 +943,7 @@ def plasma_frequency(n: u.m**-3, particle='e-', z_mean=None):
     n : ~astropy.units.Quantity
         Particle number density in units convertible to per cubic meter
 
-    particle : str, optional
+    particle : Particle, optional
         Representation of the particle species (e.g., 'p' for protons, 'D+'
         for deuterium, or 'He-4 +1' for singly ionized helium-4),
         which defaults to electrons.  If no charge state information is
@@ -1156,7 +1168,10 @@ def Debye_number(T_e: u.K, n_e: u.m**-3):
 @utils.check_quantity(
     n={'units': u.m ** -3, 'can_be_negative': False}
     )
-def inertial_length(n: u.m**-3, particle='e-'):
+@particle_input(
+    any_of={'charged', 'uncharged'}    
+    )
+def inertial_length(n: u.m**-3, particle: Particle='e-'):
     r"""Calculate the particle inertial length. At this length, the Hall effect
     becomes important.
 
@@ -1165,7 +1180,7 @@ def inertial_length(n: u.m**-3, particle='e-'):
     n : ~astropy.units.Quantity
         Particle number density in units convertible to m**-3.
 
-    particle : str, optional
+    particle : Particle, optional
         Representation of the particle species (e.g., 'p' for protons, 'D+'
         for deuterium, or 'He-4 +1' for singly ionized helium-4),
         which defaults to electrons.  If no charge state information is
