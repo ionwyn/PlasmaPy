@@ -64,8 +64,8 @@ class Test_mass_density:
     r"""Test the mass_density function in parameters.py."""
 
     def test_particleless(self):
-        with pytest.raises(ValueError):
-            mass_density(1 * u.m ** -3)
+        with pytest.raises(TypeError):
+            mass_density(1 * u.m ** -3, None)
 
     def test_wrong_units(self):
         with pytest.raises(ValueError):
